@@ -17,6 +17,7 @@ Thai vocabulary and script trainer with spaced repetition.
 **Script**
 - Consonant and vowel flashcards with SRS
 - Consonant and vowel/tone drills
+- Vowel patterns display on a ก host (กา, เกะ) — the data's ◌ placeholder renders as a tofu box in many system fonts
 - Per-character decomposition with hover tooltips (consonant class, vowel description, tone marks)
 
 **Tone listening drill** (`T`)
@@ -35,19 +36,19 @@ Connect 4 against a bar hostess — three difficulty levels, three girls (sweet 
 Learn the Kedmanee typing layout. A Thai character is shown (and spoken); type it on your keyboard — or tap the on-screen key on touch devices. Consonants-only or all-keys mode, with streak and accuracy tracking.
 
 **Vocab list** (`V`)
-All 876 words in Thai alphabetical order with real-time search. Filter by category with progress rings showing % mature cards. Click any word for a detail card with audio, romanisation, example sentence, and character decomposition. Clicking the Thai text on a flashcard opens the same detail view.
+All 878 words in Thai alphabetical order with real-time search. Filter by category with progress rings showing % mature cards. Click any word for a detail card with audio, romanisation, example sentence, and character decomposition. Clicking the Thai text on a flashcard opens the same detail view.
 
 **Statistics** (`0`)
 SRS summary, 7-day review forecast chart, per-category mature/seen counts, and progress export/import.
 
 **Audio**
-Individual letters are always spoken as sound + traditional name with a slight pause — e.g. ก is read "ก, ก ไก่", า as "อา, สระอา" — consistently across the keyboard tutor, Walking Street, script flashcards, drills, and script SRS. All Thai text is speakable via the Web Speech API (requires a Thai TTS voice — available in Chrome/Edge on desktop and Android, and in iOS Safari). On iOS, speech is unlocked by the first touch, as required by the platform. If no Thai voice is found, the home screen shows a notice instead of failing silently. When packaged as a native app with Capacitor, speech routes through the native TTS plugin instead (Android's WebView has no Web Speech API).
+Individual letters are always spoken as sound + traditional name — e.g. ก is read "ก … ก ไก่", า as "อา … สระอา" — consistently across the keyboard tutor, Walking Street, script flashcards, drills, and script SRS. The sound and the name are separate utterances with a real pause between them, so each keeps its natural pronunciation. All Thai text is speakable via the Web Speech API (requires a Thai TTS voice — available in Chrome/Edge on desktop and Android, and in iOS Safari). On iOS, speech is unlocked by the first touch, as required by the platform. If no Thai voice is found, the home screen shows a notice instead of failing silently. When packaged as a native app with Capacitor, speech routes through the native TTS plugin instead (Android's WebView has no Web Speech API).
 
 **PWA / offline**
 Add to home screen on mobile. Works fully offline after first load.
 
 **Mobile / touch**
-Touch devices (detected via `pointer: coarse`) get an adapted UI automatically: keyboard-shortcut badges and hints are hidden, tap targets are enlarged, the games take touch input (tap signs in Walking Street, tap on-screen keys in the tutor), and safe-area insets keep content clear of notches.
+Touch devices (detected via `pointer: coarse`) get an adapted UI automatically: keyboard-shortcut badges and hints are hidden, tap targets are enlarged, the games take touch input (Walking Street shows the tutor's on-screen Kedmanee keyboard, the tutor's keys are tappable, Connect สี่ and Soi Buakhao are button-driven), and safe-area insets keep content clear of notches.
 
 ## Keyboard shortcuts
 
