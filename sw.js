@@ -1,7 +1,7 @@
 // Thai Trainer service worker — cache-first for all app assets
-// "thaicab-2e6fcb0" is replaced with "thaicab-<commit sha>" by CI on deploy,
+// "thaicab-edec2f3" is replaced with "thaicab-<commit sha>" by CI on deploy,
 // so every release invalidates the previous cache automatically.
-const CACHE = "thaicab-2e6fcb0";
+const CACHE = "thaicab-edec2f3";
 
 const PRECACHE = [
   "./index.html",
