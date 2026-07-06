@@ -34,7 +34,7 @@ function _bbRomanNum(n) {
 
 const _BB_FARE  = 15;                          // baht per person on the loop
 const _BB_STOPS = 10;                          // stops in a shift
-const _BB_TRAY  = [1, 2, 5, 10, 20, 50, 100];  // your money tray
+const _BB_TRAY  = [5, 10, 20, 50, 100];         // your money tray (฿1/฿2 not in use)
 
 // Real Thai money colours (note faces; ฿10 is the gold-centred coin)
 const _BB_MONEY_COL = {
@@ -74,14 +74,14 @@ function _bbBreakdown(amount) {
 // Off-loop destinations only — anywhere on the Beach Road/Second Road loop
 // itself (Walking Street, Terminal 21…) is just the flat ฿15 fare.
 const _BB_DESTS = [
-  { en: "Soi Buakhao",         th: "ซอยบัวขาว",     fair: 40  },
-  { en: "Naklua market",       th: "ตลาดนาเกลือ",   fair: 60  },
-  { en: "Jomtien Beach",       th: "หาดจอมเทียน",    fair: 80  },
-  { en: "Big Buddha Hill",     th: "เขาพระใหญ่",     fair: 120 },
-  { en: "the floating market", th: "ตลาดน้ำ",       fair: 150 },
-  { en: "Sanctuary of Truth",  th: "ปราสาทสัจธรรม",  fair: 200 },
-  { en: "the Tiger Park",      th: "สวนเสือ",        fair: 250 },
-  { en: "Nong Nooch Garden",   th: "สวนนงนุช",      fair: 300 },
+  { en: "Soi Buakhao",         th: "ซอยบัวขาว",     fair: 50  },  // ~2 km
+  { en: "Naklua market",       th: "ตลาดนาเกลือ",   fair: 80  },  // ~5 km north
+  { en: "Jomtien Beach",       th: "หาดจอมเทียน",    fair: 120 },  // ~5 km south
+  { en: "Sanctuary of Truth",  th: "ปราสาทสัจธรรม",  fair: 180 },  // ~8 km north
+  { en: "Big Buddha Hill",     th: "เขาพระใหญ่",     fair: 250 },  // ~8 km, hilltop
+  { en: "the Tiger Park",      th: "สวนเสือ",        fair: 350 },  // ~15 km
+  { en: "the floating market", th: "ตลาดน้ำ",       fair: 450 },  // far
+  { en: "Nong Nooch Garden",   th: "สวนนงนุช",      fair: 500 },  // ~18 km south
 ];
 
 function _bbMakeCharter() {
@@ -92,7 +92,7 @@ function _bbMakeCharter() {
     .sort(() => Math.random() - 0.5)
     .slice(0, 3);
   const choices = [quote, ...deltas.map(d => quote + d)].sort(() => Math.random() - 0.5);
-  const bottom = quote - (quote >= 150 ? 50 : quote >= 80 ? 30 : 20);
+  const bottom = quote - (quote >= 350 ? 120 : quote >= 150 ? 60 : quote >= 80 ? 30 : 20);
   let counter = bottom + [-20, -10, 0, 10][Math.floor(Math.random() * 4)];
   counter = Math.max(10, Math.min(counter, quote - 10));
   return {
@@ -240,23 +240,23 @@ function _bbFareUI() {
         : `<strong class="bb-thai">${_bbThaiNum(c.paid)}บาท</strong>`}
       <span class="bb-hint" id="bb-hint"></span></div>
     <div class="bb-caption bb-dim">Give the right change — or take it with a wai if it's exact.</div>
-    <div class="bb-money" id="bb-coins"></div>
-    <div class="bb-money" id="bb-notes"></div>
+    <div class="bb-money" id="bb-tray"></div>
     <div class="bb-given-row">
       <div class="bb-given" id="bb-given"></div>
+      <button class="btn bb-clear" id="bb-clear" title="Clear all">✕</button>
       <button class="btn btn-primary bb-confirm" id="bb-confirm">✓</button>
     </div>`;
-  const coins = document.getElementById("bb-coins");
-  const notes = document.getElementById("bb-notes");
+  const tray = document.getElementById("bb-tray");
   _BB_TRAY.forEach((d, i) => {
     const b = document.createElement("button");
     b.className = d <= 10 ? "bb-coin" : "bb-note";
     b.style.background = _BB_MONEY_COL[d];
     b.innerHTML = `<span class="kb-hint bb-key">${i + 1}</span>฿${d}`;
     b.onclick = () => _bbTrayAdd(d);
-    (d <= 10 ? coins : notes).appendChild(b);
+    tray.appendChild(b);
   });
   document.getElementById("bb-confirm").onclick = _bbConfirmChange;
+  document.getElementById("bb-clear").onclick = () => { _bbSel = []; _bbRenderGiven(); };
   body.querySelector(".bb-speak")?.addEventListener("click", () => {
     _bbSpeakBaht(c.paid);
     // like Connect สี่: replays gradually reveal the answer as text
@@ -321,7 +321,7 @@ function _bbCharterUI() {
     <div class="bb-pax">${_bbPax.e} <strong>${_bbEsc(_bbPax.name)}</strong> flags you down:
       <span class="bb-thai">“ไป${_bbEsc(c.dest.th)} เท่าไหร่?”</span></div>
     <div class="bb-caption">To <strong>${_bbEsc(c.dest.en)}</strong> — fair price
-      <strong>฿${c.quote}</strong>. Hold up the right sign:</div>
+      <strong>฿${c.quote}</strong>. What is your response?</div>
     <div class="bb-choices">` + c.choices.map((v, i) => `
       <button class="bb-choice" data-i="${i}">
         <span class="bb-cletter kb-hint">${i + 1}</span>
@@ -447,7 +447,7 @@ function _bbEnd() {
 function _bbKey(key) {
   if (!_bbActive()) return false;
   if (_bbPhase === "fare") {
-    const i = "1234567".indexOf(key);
+    const i = "12345".indexOf(key);
     if (i >= 0) { _bbTrayAdd(_BB_TRAY[i]); return true; }
     if (key === "Backspace") { _bbSel.pop(); _bbRenderGiven(); return true; }
     if (key === "Enter") { _bbConfirmChange(); return true; }
@@ -761,9 +761,10 @@ function _bbFrame(now) {
       L.gone = false;
       L.shirt = _BB_LADY_SHIRTS[Math.floor(Math.random() * _BB_LADY_SHIRTS.length)];
     }
-    if (L.heartUntil && now < L.heartUntil) {
-      ctx.font = "13px sans-serif";
-      ctx.fillText("💕", W * L.px + 26, roadY - 36);
+    if (L.heartUntil && now < L.heartUntil && !L.walking) {
+      ctx.font = "bold 18px sans-serif";
+      ctx.fillStyle = "#ff3080";
+      ctx.fillText("♥", W * L.px + 26, roadY - 40);
     }
     if (!L.gone && !L.walking) {
       _bbSprite(ctx, _WALK_FRAMES[0], { ..._WALK_BASE, B: L.shirt },
@@ -795,7 +796,7 @@ function _bbFrame(now) {
         if (a.haggler) {
           for (let li = 0; li < _bbLadies.length; li++) {
             const L = _bbLadies[li];
-            if (L.gone) continue;
+            if (L.gone || L.walking) continue;
             if (Math.abs(a.x - (W * L.px + 30) + (a.vx < 0 ? 16 : -16)) < 4) {
               a.haggler = false;
               a.haggledLady = li;
@@ -819,6 +820,11 @@ function _bbFrame(now) {
         const Lw = _bbLadies[a.leavingWith];
         _bbSprite(ctx, _WALK_FRAMES[ambFrame], { ..._WALK_BASE, B: Lw.shirt },
           a.x + (a.vx < 0 ? 14 : -14), roadY - 26, 3, a.vx < 0);
+        if (Lw.heartUntil && now < Lw.heartUntil) {
+          ctx.font = "bold 18px sans-serif";
+          ctx.fillStyle = "#ff3080";
+          ctx.fillText("♥", a.x + (a.vx < 0 ? 7 : -7), roadY - 44);
+        }
       }
       if (paused) {
         ctx.font = "bold 9px monospace";
